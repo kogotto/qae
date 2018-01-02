@@ -3,6 +3,8 @@
 
 #include <QMessageBox>
 
+#include "mythread.h"
+
 enum class Column {
     time = 0,
     result
@@ -22,7 +24,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::startSlot()
 {
-    receiveResults(QTime(0, 0, 0, 250), 250);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
+
+    auto thread = new MyThread();
+    connect(thread, &MyThread::sendResults,
+            this, &MainWindow::receiveResults);
+    connect(thread, &MyThread::finished,
+            thread, &QObject::deleteLater);
+    thread->start();
 }
 
 void MainWindow::stopSlot()

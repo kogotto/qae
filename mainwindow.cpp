@@ -22,15 +22,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::startSlot()
 {
-    receiveResult(QTime(0, 0, 0, 250), 250);
+    receiveResults(QTime(0, 0, 0, 250), 250);
 }
 
 void MainWindow::stopSlot()
 {
-    receiveResult(QTime(0, 0, 0, 750), 750);
+    receiveResults(QTime(0, 0, 0, 750), 750);
 }
 
-void MainWindow::receiveResult(QTime time, int result)
+void MainWindow::receiveResults(QTime time, int result)
 {
     const auto row = ui->table->rowCount();
     ui->table->insertRow(row);
@@ -42,7 +42,7 @@ void MainWindow::setTimeItem(int row, const QTime &time)
 {
     setTableItem(row,
                  static_cast<int>(Column::time),
-                 time.toString("zzz"));
+                 time.toString("s.zzz"));
 }
 
 void MainWindow::setResultItem(int row, int result)

@@ -20,7 +20,7 @@ private slots:
     void startSlot();
     void stopSlot();
 
-    void receiveResult(QTime time, int result);
+    void receiveResults(QTime time, int result);
 
 private:
     void setTimeItem(int row, const QTime & time);

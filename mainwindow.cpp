@@ -3,6 +3,7 @@
 
 #include <QMessageBox>
 
+
 enum class Column {
     time = 0,
     result
@@ -13,21 +14,40 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    worker = new Worker();
+    worker->moveToThread(&workerThread);
+    connect(&workerThread, &QThread::finished,
+            worker, &QObject::deleteLater);
+
+    connect(worker, &Worker::sendResults,
+            this, &MainWindow::receiveResults);
+    connect(this, &MainWindow::startWork,
+            worker, &Worker::doWork);
+    workerThread.start();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    workerThread.quit();
+    workerThread.wait();
 }
 
 void MainWindow::startSlot()
 {
-    receiveResults(QTime(0, 0, 0, 250), 250);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
+
+    emit startWork();
 }
 
 void MainWindow::stopSlot()
 {
-    receiveResults(QTime(0, 0, 0, 750), 750);
+    emit stopWork();
+
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
 }
 
 void MainWindow::receiveResults(QTime time, int result)

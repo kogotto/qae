@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include <QTime>
+#include <QThread>
+#include "mythread.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -16,6 +19,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    void startWork();
+    void stopWork();
+
 private slots:
     void startSlot();
     void stopSlot();
@@ -28,6 +35,8 @@ private:
     void setTableItem(int row, int column, const QString & text);
 
     Ui::MainWindow *ui;
+    QThread workerThread;
+    Worker * worker;
 };
 
 #endif // MAINWINDOW_H

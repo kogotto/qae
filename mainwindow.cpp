@@ -15,23 +15,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    worker = new Worker();
-    worker->moveToThread(&workerThread);
-    connect(&workerThread, &QThread::finished,
-            worker, &QObject::deleteLater);
-
-    connect(worker, &Worker::sendResults,
+    connect(&controller, &Controller::resultsReady,
             this, &MainWindow::receiveResults);
-    connect(this, &MainWindow::startWork,
-            worker, &Worker::doWork);
-    workerThread.start();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    workerThread.quit();
-    workerThread.wait();
 }
 
 void MainWindow::startSlot()
@@ -39,23 +29,27 @@ void MainWindow::startSlot()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
+    controller.start();
     emit startWork();
 }
 
 void MainWindow::stopSlot()
 {
+    controller.stop();
     emit stopWork();
 
     ui->startButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
 }
 
-void MainWindow::receiveResults(QTime time, int result)
+void MainWindow::receiveResults(int index, QTime time, int result)
 {
-    const auto row = ui->table->rowCount();
-    ui->table->insertRow(row);
-    setTimeItem(row, time);
-    setResultItem(row, result);
+    if (index >= ui->table->rowCount()) {
+        ui->table->setRowCount(index + 1);
+    }
+
+    setTimeItem(index, time);
+    setResultItem(index, result);
 }
 
 void MainWindow::setTimeItem(int row, const QTime &time)

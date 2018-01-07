@@ -12,11 +12,41 @@ class Worker:
     Q_OBJECT
 
 public slots:
-    void doWork();
+    void doWork(int index);
 
 signals:
-    void sendResults(QTime time, int result);
+    void sendResults(int index, QTime time, int result);
 };
 
+
+class Controller:
+        public QObject
+{
+    Q_OBJECT
+public:
+    Controller();
+    ~Controller();
+
+    void start();
+    void pause();
+    void stop();
+
+signals:
+    void resultsReady(int index, QTime time, int result);
+    void finished();
+
+    void doWork(int index);
+
+private slots:
+    void receiveResults(int index, QTime time, int result);
+
+private:
+    void doNextJob();
+
+    QThread workerThread;
+    int jobs;
+    int currentJob;
+    bool working;
+};
 
 #endif // MYTHREAD_H

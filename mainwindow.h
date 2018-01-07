@@ -27,7 +27,7 @@ private slots:
     void startSlot();
     void stopSlot();
 
-    void receiveResults(QTime time, int result);
+    void receiveResults(int index, QTime time, int result);
 
 private:
     void setTimeItem(int row, const QTime & time);
@@ -35,8 +35,7 @@ private:
     void setTableItem(int row, int column, const QString & text);
 
     Ui::MainWindow *ui;
-    QThread workerThread;
-    Worker * worker;
+    Controller controller;
 };
 
 #endif // MAINWINDOW_H

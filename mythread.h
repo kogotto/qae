@@ -11,7 +11,7 @@ class Worker:
 {
     Q_OBJECT
 
-public:
+public slots:
     void doWork();
 
 signals:

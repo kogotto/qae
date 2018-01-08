@@ -19,10 +19,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-signals:
-    void startWork();
-    void stopWork();
-
 private slots:
     void startSlot();
     void stopSlot();

@@ -30,13 +30,11 @@ void MainWindow::startSlot()
     ui->stopButton->setEnabled(true);
 
     controller.start();
-    emit startWork();
 }
 
 void MainWindow::stopSlot()
 {
     controller.stop();
-    emit stopWork();
 
     ui->startButton->setEnabled(true);
     ui->stopButton->setEnabled(false);

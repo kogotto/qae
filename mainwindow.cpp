@@ -15,8 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(&controller, &Controller::resultsReady,
-            this, &MainWindow::receiveResults);
+    model = new Model();
+    ui->table->setModel(model);
+
+//    connect(&controller, &Controller::resultsReady,
+//            this, &MainWindow::receiveResults);
 }
 
 MainWindow::~MainWindow()
@@ -29,6 +32,8 @@ void MainWindow::startSlot()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
+
+
     controller.start();
 }
 
@@ -40,32 +45,42 @@ void MainWindow::stopSlot()
     ui->stopButton->setEnabled(false);
 }
 
-void MainWindow::receiveResults(int index, QTime time, int result)
+void MainWindow::resetSlot()
 {
-    if (index >= ui->table->rowCount()) {
-        ui->table->setRowCount(index + 1);
-    }
 
-    setTimeItem(index, time);
-    setResultItem(index, result);
 }
 
-void MainWindow::setTimeItem(int row, const QTime &time)
+void MainWindow::addRowSlot()
 {
-    setTableItem(row,
-                 static_cast<int>(Column::time),
-                 time.toString("s.zzz"));
+    model->insertRow(model->rowCount());
 }
 
-void MainWindow::setResultItem(int row, int result)
-{
-    setTableItem(row,
-                 static_cast<int>(Column::result),
-                 QString::number(result));
-}
+//void MainWindow::receiveResults(int index, QTime time, int result)
+//{
+//    if (index >= ui->table->rowCount()) {
+//        ui->table->setRowCount(index + 1);
+//    }
 
-void MainWindow::setTableItem(int row, int column, const QString &text)
-{
-    auto item = new QTableWidgetItem(text);
-    ui->table->setItem(row, column, item);
-}
+//    setTimeItem(index, time);
+//    setResultItem(index, result);
+//}
+
+//void MainWindow::setTimeItem(int row, const QTime &time)
+//{
+//    setTableItem(row,
+//                 static_cast<int>(Column::time),
+//                 time.toString("s.zzz"));
+//}
+
+//void MainWindow::setResultItem(int row, int result)
+//{
+//    setTableItem(row,
+//                 static_cast<int>(Column::result),
+//                 QString::number(result));
+//}
+
+//void MainWindow::setTableItem(int row, int column, const QString &text)
+//{
+//    auto item = new QTableWidgetItem(text);
+//    ui->table->setItem(row, column, item);
+//}

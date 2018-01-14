@@ -6,28 +6,45 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>336</width>
-    <height>333</height>
+    <width>529</width>
+    <height>361</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QTableWidget" name="table">
-      <column>
-       <property name="text">
-        <string>time</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>result</string>
-       </property>
-      </column>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QTableView" name="table"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="addRowButton">
+          <property name="text">
+           <string>add row</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -45,6 +62,13 @@
         </property>
         <property name="text">
          <string>stop</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="resetButton">
+        <property name="text">
+         <string>reset</string>
         </property>
        </widget>
       </item>
@@ -77,7 +101,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>336</width>
+     <width>529</width>
      <height>20</height>
     </rect>
    </property>
@@ -102,8 +126,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>281</x>
-     <y>290</y>
+     <x>518</x>
+     <y>328</y>
     </hint>
     <hint type="destinationlabel">
      <x>321</x>
@@ -118,8 +142,8 @@
    <slot>startSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>286</x>
-     <y>57</y>
+     <x>518</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel">
      <x>320</x>
@@ -134,8 +158,8 @@
    <slot>stopSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>273</x>
-     <y>93</y>
+     <x>518</x>
+     <y>94</y>
     </hint>
     <hint type="destinationlabel">
      <x>306</x>
@@ -143,9 +167,43 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>stopButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>resetSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>94</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>333</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addRowButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addRowSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>316</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>177</x>
+     <y>329</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>startSlot()</slot>
   <slot>stopSlot()</slot>
+  <slot>resetSlot()</slot>
+  <slot>addRowSlot()</slot>
  </slots>
 </ui>

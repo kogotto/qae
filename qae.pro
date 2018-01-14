@@ -18,6 +18,8 @@ SOURCES += main.cpp\
     mythread.cpp
 
 HEADERS  += mainwindow.h \
-    mythread.h
+    mythread.h \
+    model.h \
+    work.h
 
 FORMS    += mainwindow.ui

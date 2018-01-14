@@ -27,6 +27,9 @@ Controller::Controller():
     connect(this, &Controller::doWork,
             worker, &Worker::doWork);
 
+    connect(this, &Controller::doWork,
+            &jc, &JobController::doWork);
+
     workerThread.start();
 }
 
@@ -36,9 +39,9 @@ Controller::~Controller()
     workerThread.wait();
 }
 
-void Controller::start()
+void Controller::start(const Work &work)
 {
-    jobs = 8;
+    this->work = &work;
     currentJob = 0;
     working = true;
 
@@ -67,6 +70,21 @@ void Controller::receiveResults(int index, QTime time, int result)
 void Controller::doNextJob()
 {
     if (working) {
-        emit doWork(currentJob);
+        emit doWork(currentJob, currentInput());
     }
+}
+
+int Controller::currentInput()
+{
+    return (*work->table)[currentJob].input;
+}
+
+JobController::JobController(QThread &thread)
+{
+
+}
+
+void JobController::doWork(int index, int input)
+{
+
 }

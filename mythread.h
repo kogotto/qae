@@ -14,10 +14,14 @@ class Worker:
     Q_OBJECT
 
 public slots:
-    void doWork(int index);
+    void doStage(int stage);
 
 signals:
-    void sendResults(int index, QTime time, int result);
+    void stageComplete(int stage);
+
+private:
+    void stage1();
+    void stage2();
 };
 
 class JobController:
@@ -25,10 +29,23 @@ class JobController:
 {
     Q_OBJECT
 public:
-    JobController(QThread & thread);
-public slots:
-    void doWork(int index, int input);
+    void start(int input);
 
+signals:
+    void doStage(int stage);
+
+    void stageCompleteSignal(int stage);
+    void completeSignal(int input);
+
+public slots:
+    void stageCompleteSlot(int stage);
+
+private:
+    void doNextStage();
+
+    int input = 0;
+    int currentStage = 0;
+    bool paused = false;
 };
 
 class Controller:

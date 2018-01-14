@@ -3,12 +3,53 @@
 #include <cassert>
 
 
-void Worker::doWork(int index)
+void Worker::doStage(int stage) {
+    switch (stage) {
+        case 1: return stage1();
+        case 2: return stage2();
+        default:
+            assert(false && "unknown stage");
+    }
+}
+
+void Worker::stage1()
 {
-    const auto time = qrand() % 2000 + 1000;
-    const auto result = qrand() % 10;
+    const auto time = qrand() % 500 + 1000;
     QThread::msleep(time);
-    emit sendResults(index, QTime(0, 0).addMSecs(time), result);
+    emit stageComplete(1);
+}
+
+void Worker::stage2()
+{
+    const auto time = qrand() % 500 + 1000;
+    QThread::msleep(time);
+    emit stageComplete(2);
+}
+
+
+void JobController::start(int input) {
+    this->input = input;
+    currentStage = 1;
+    paused = false;
+    doNextStage();
+}
+
+void JobController::stageCompleteSlot(int stage) {
+    assert(stage == currentStage);
+    emit stageComplete(stage);
+    ++currentStage;
+    if (currentStage > 2) {
+        emit completeSignal(input);
+        return;
+    }
+
+    doNextStage();
+}
+
+void JobController::doNextStage() {
+    if (!paused) {
+        emit doStage(currentStage);
+    }
 }
 
 
@@ -22,13 +63,10 @@ Controller::Controller():
     connect(&workerThread, &QThread::finished,
             worker, &QObject::deleteLater);
 
-    connect(worker, &Worker::sendResults,
-            this, Controller::receiveResults);
-    connect(this, &Controller::doWork,
-            worker, &Worker::doWork);
-
-    connect(this, &Controller::doWork,
-            &jc, &JobController::doWork);
+    connect(&jc, &JobController::doStage,
+            worker, &Worker::doStage);
+    connect(worker, &Worker::stageComplete,
+            &jc, &JobController::stageCompleteSlot);
 
     workerThread.start();
 }
@@ -77,14 +115,4 @@ void Controller::doNextJob()
 int Controller::currentInput()
 {
     return (*work->table)[currentJob].input;
-}
-
-JobController::JobController(QThread &thread)
-{
-
-}
-
-void JobController::doWork(int index, int input)
-{
-
 }

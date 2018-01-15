@@ -17,13 +17,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     model = new Model();
     ui->table->setModel(model);
-    ui->table->horizontalHeader()->setVisible(true);
-    ui->table->verticalHeader()->setVisible(true);
 
     connect(&controller, &Controller::stageCompleteSignal,
             this, &MainWindow::stageCompleteSlot);
     connect(&controller, &Controller::workCompleteSignal,
             this, &MainWindow::workCompleteSlot);
+    connect(&controller, &Controller::finished,
+            this, &MainWindow::finishedSlot);
 }
 
 MainWindow::~MainWindow()
@@ -37,9 +37,10 @@ void MainWindow::startSlot()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
-
-
-    controller.start(model->getWork());
+    if (controller.getState() == Controller::State::idle)
+      controller.start(model->getWork());
+    else if (controller.getState() == Controller::State::interapted)
+      controller.cont();
 }
 
 void MainWindow::stopSlot()
@@ -58,6 +59,12 @@ void MainWindow::resetSlot()
 void MainWindow::addRowSlot()
 {
   model->insertRow(model->rowCount());
+}
+
+void MainWindow::finishedSlot()
+{
+  ui->startButton->setEnabled(true);
+  ui->stopButton->setEnabled(false);
 }
 
 void MainWindow::stageCompleteSlot(int job, int stage)

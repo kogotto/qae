@@ -26,6 +26,7 @@ private slots:
     void resetSlot();
 
     void addRowSlot();
+    void finishedSlot();
 
     void stageCompleteSlot(int job, int stage);
     void workCompleteSlot(int job);
@@ -40,6 +41,7 @@ private:
     Ui::MainWindow *ui;
     Controller controller;
     Model * model;
+
 };
 
 #endif // MAINWINDOW_H

@@ -168,14 +168,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>stopButton</sender>
+   <sender>resetButton</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>resetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>518</x>
-     <y>94</y>
+     <x>478</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>

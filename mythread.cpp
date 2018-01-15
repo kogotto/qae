@@ -34,6 +34,11 @@ void JobController::start(int input) {
     doNextStage();
 }
 
+void JobController::stop()
+{
+  paused = true;
+}
+
 void JobController::stageCompleteSlot(int stage) {
     assert(stage == currentStage);
     emit stageCompleteSignal(stage);
@@ -55,7 +60,7 @@ void JobController::doNextStage() {
 
 Controller:: Controller():
     currentJob(0),
-    working(false)
+    state(State::idle)
 {
     auto worker = new Worker();
     worker->moveToThread(&workerThread);
@@ -85,14 +90,28 @@ void Controller::start(const Work &work)
 {
     this->work = work;
     currentJob = 0;
-    working = true;
+    state = State::working;
 
     doNextJob();
 }
 
+void Controller::cont()
+{
+  assert(state == State::interapted);
+  state = State::working;
+
+  doNextJob();
+}
+
 void Controller::stop()
 {
-    working = false;
+    state = State::interapted;
+    jc.stop();
+}
+
+Controller::State Controller::getState() const
+{
+  return state;
 }
 
 void Controller::stageCompleteSlot(int stage)
@@ -115,7 +134,7 @@ void Controller::workComplete(int input)
 
 void Controller::doNextJob()
 {
-    if (working) {
+    if (state == State::working) {
         jc.start(currentInput());
     }
 }

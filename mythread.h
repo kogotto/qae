@@ -1,4 +1,4 @@
-﻿#ifndef MYTHREAD_H
+#ifndef MYTHREAD_H
 #define MYTHREAD_H
 
 
@@ -30,6 +30,7 @@ class JobController:
     Q_OBJECT
 public:
     void start(int input);
+    void stop();
 
 signals:
     void doStage(int stage);
@@ -53,12 +54,22 @@ class Controller:
 {
     Q_OBJECT
 public:
+    enum class State {
+        idle
+      , working
+      , interapted
+    };
+
+
     Controller();
     ~Controller();
 
     void start(const Work & work);
+    void cont();
     void pause();
     void stop();
+
+    State getState() const;
 
 signals:
     void stageCompleteSignal(int currentIndex, int currentStage);
@@ -78,7 +89,8 @@ private:
     Work work;
     JobController jc;
     int currentJob;
-    bool working;
+
+    State state;
 };
 
 #endif // MYTHREAD_H

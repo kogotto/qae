@@ -1,4 +1,4 @@
-﻿#include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -17,14 +17,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     model = new Model();
     ui->table->setModel(model);
+    ui->table->horizontalHeader()->setVisible(true);
+    ui->table->verticalHeader()->setVisible(true);
 
-//    connect(&controller, &Controller::resultsReady,
-//            this, &MainWindow::receiveResults);
+    connect(&controller, &Controller::stageCompleteSignal,
+            this, &MainWindow::stageCompleteSlot);
+    connect(&controller, &Controller::workCompleteSignal,
+            this, &MainWindow::workCompleteSlot);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete model;
 }
 
 void MainWindow::startSlot()
@@ -52,7 +57,17 @@ void MainWindow::resetSlot()
 
 void MainWindow::addRowSlot()
 {
-    model->insertRow(model->rowCount());
+  model->insertRow(model->rowCount());
+}
+
+void MainWindow::stageCompleteSlot(int job, int stage)
+{
+  model->setData(model->index(job, stage), true);
+}
+
+void MainWindow::workCompleteSlot(int job)
+{
+  model->setData(model->index(job, 3), true);
 }
 
 //void MainWindow::receiveResults(int index, QTime time, int result)

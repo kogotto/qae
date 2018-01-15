@@ -1,4 +1,4 @@
-﻿#ifndef MAINWINDOW_H
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -26,6 +26,9 @@ private slots:
     void resetSlot();
 
     void addRowSlot();
+
+    void stageCompleteSlot(int job, int stage);
+    void workCompleteSlot(int job);
 
 //    void receiveResults(int index, QTime time, int result);
 

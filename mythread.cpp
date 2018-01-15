@@ -1,4 +1,4 @@
-﻿#include "mythread.h"
+#include "mythread.h"
 
 #include <cassert>
 
@@ -53,7 +53,7 @@ void JobController::doNextStage() {
 }
 
 
-Controller::Controller():
+Controller:: Controller():
     currentJob(0),
     working(false)
 {

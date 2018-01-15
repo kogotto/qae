@@ -1,4 +1,4 @@
-﻿#ifndef MODEL
+#ifndef MODEL
 #define MODEL
 
 #include <vector>
@@ -10,19 +10,22 @@ struct Row {
     int input;
     bool stage1;
     bool stage2;
+    bool done;
 };
 
 using Table = std::vector<Row>;
 
 class Model:
         public QAbstractTableModel {
+    Q_OBJECT
 public:
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override {
+    QVariant headerData(int section, Qt::Orientation orientation, int) const override {
         if (orientation == Qt::Horizontal) {
             switch (section) {
                 case 0: return QString("input");
                 case 1: return QString("stage1");
                 case 2: return QString("stage2");
+                case 3: return QString("done everything");
             }
         } else {
             return QString::number(section + 1);
@@ -33,8 +36,8 @@ public:
         return table.size();
     }
 
-    int columnCount(const QModelIndex &parent) const override {
-        return 3;
+    int columnCount(const QModelIndex &) const override {
+        return 4;
     }
 
     QVariant data(const QModelIndex &index, int role) const override {
@@ -44,9 +47,9 @@ public:
                 case 0: return row.input;
                 case 1: return row.stage1 ? QString("done"): QString("");
                 case 2: return row.stage2 ? QString("done"): QString("");
+                case 3: return row.done   ? QString("done"): QString("");
             }
         }
-
         return QVariant();
     }
 
@@ -58,7 +61,7 @@ public:
         return currentFlags;
     }
 
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override {
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override {
         if (index.isValid() && role == Qt::EditRole) {
             auto & row = table[index.row()];
             switch (index.column()) {
@@ -67,6 +70,8 @@ public:
                 case 1: row.stage1 = value.toBool();
                     break;
                 case 2: row.stage2 = value.toBool();
+                    break;
+                case 3: row.done   = value.toBool();
                     break;
             }
 

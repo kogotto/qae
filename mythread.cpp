@@ -36,7 +36,7 @@ void JobController::start(int input) {
 
 void JobController::stageCompleteSlot(int stage) {
     assert(stage == currentStage);
-    emit stageComplete(stage);
+    emit stageCompleteSignal(stage);
     ++currentStage;
     if (currentStage > 2) {
         emit completeSignal(input);
@@ -54,7 +54,6 @@ void JobController::doNextStage() {
 
 
 Controller::Controller():
-    jobs(0),
     currentJob(0),
     working(false)
 {
@@ -68,6 +67,11 @@ Controller::Controller():
     connect(worker, &Worker::stageComplete,
             &jc, &JobController::stageCompleteSlot);
 
+    connect(&jc, &JobController::stageCompleteSignal,
+            this, &Controller::stageCompleteSlot);
+    connect(&jc, &JobController::completeSignal,
+            this, &Controller::workComplete);
+
     workerThread.start();
 }
 
@@ -79,7 +83,7 @@ Controller::~Controller()
 
 void Controller::start(const Work &work)
 {
-    this->work = &work;
+    this->work = work;
     currentJob = 0;
     working = true;
 
@@ -91,13 +95,17 @@ void Controller::stop()
     working = false;
 }
 
-void Controller::receiveResults(int index, QTime time, int result)
+void Controller::stageCompleteSlot(int stage)
 {
-    assert(index == currentJob);
-    emit resultsReady(index, time, result);
+    emit stageCompleteSignal(currentJob, stage);
+}
 
+void Controller::workComplete(int input)
+{
+    emit workCompleteSignal(currentJob);
     ++currentJob;
-    if (currentJob == jobs) {
+
+    if (currentJob == work.size()) {
         emit finished();
         return;
     }
@@ -108,11 +116,11 @@ void Controller::receiveResults(int index, QTime time, int result)
 void Controller::doNextJob()
 {
     if (working) {
-        emit doWork(currentJob, currentInput());
+        jc.start(currentInput());
     }
 }
 
 int Controller::currentInput()
 {
-    return (*work->table)[currentJob].input;
+    return work[currentJob];
 }

@@ -34,7 +34,7 @@ void MainWindow::startSlot()
 
 
 
-    controller.start();
+    controller.start(model->getWork());
 }
 
 void MainWindow::stopSlot()

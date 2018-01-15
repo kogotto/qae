@@ -61,13 +61,13 @@ public:
     void stop();
 
 signals:
-    void resultsReady(int index, QTime time, int result);
+    void stageCompleteSignal(int currentIndex, int currentStage);
+    void workCompleteSignal(int currentIndex);
     void finished();
 
-    void doWork(int index, int input);
-
 private slots:
-    void receiveResults(int index, QTime time, int result);
+    void stageCompleteSlot(int stage);
+    void workComplete(int input);
 
 private:
     void doNextJob();
@@ -75,7 +75,7 @@ private:
     int currentInput();
 
     QThread workerThread;
-    Work * work;
+    Work work;
     JobController jc;
     int currentJob;
     bool working;

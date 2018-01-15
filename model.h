@@ -4,6 +4,8 @@
 #include <vector>
 #include <QAbstractTableModel>
 
+#include "work.h"
+
 struct Row {
     int input;
     bool stage1;
@@ -86,8 +88,13 @@ public:
         return true;
     }
 
-    Table & getTable() {
-        return table;
+    Work getWork() const {
+        Work result;
+        result.reserve(table.size());
+        for (const auto & row: table) {
+            result.emplace_back(row.input);
+        }
+        return result;
     }
 
 private:

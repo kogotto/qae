@@ -1,11 +1,9 @@
 ﻿#ifndef WORK
 #define WORK
 
-#include "model.h"
+#include <vector>
 
-struct Work {
-    Table * table;
-};
+using Work = std::vector<int>;
 
 #endif // WORK
 

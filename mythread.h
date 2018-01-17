@@ -1,4 +1,4 @@
-#ifndef MYTHREAD_H
+﻿#ifndef MYTHREAD_H
 #define MYTHREAD_H
 
 
@@ -48,6 +48,48 @@ private:
     int currentStage = 0;
     bool paused = false;
 };
+
+
+class WorkIterator {
+public:
+    explicit WorkIterator(int work, int stage = 1):
+        work(work),
+        stage(stage)
+    {}
+
+    WorkIterator & operator ++() {
+        if (stage == stages) {
+            ++work;
+            stage = 1;
+        } else {
+            ++stage;
+        }
+        return *this;
+    }
+
+    bool operator == (const WorkIterator & rhs) const {
+        return work == rhs.work &&
+                stage == rhs.stage;
+    }
+
+    bool operator != (const WorkIterator & rhs) const {
+        return !(operator==(rhs));
+    }
+
+private:
+    int work;
+    int stage;
+    static const int stages = 2;
+};
+
+WorkIterator begin(const Work &) {
+    return WorkIterator(0);
+}
+
+WorkIterator end(const Work & work) {
+    return WorkIterator(work.size());
+}
+
 
 class Controller:
         public QObject

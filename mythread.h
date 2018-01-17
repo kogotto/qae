@@ -119,19 +119,23 @@ signals:
     void workCompleteSignal(int currentIndex);
     void finished();
 
+signals:
+    void doStage(int input, int stage);
+
 private slots:
-    void stageCompleteSlot(int stage);
+    void stageCompleteSlot(int input, int stage);
     void workComplete(int input);
 
 private:
     void doNextJob();
 
-    int currentInput();
+    int currentInput() const;
 
     QThread workerThread;
     Work work;
-    JobController jc;
-    int currentJob;
+    WorkIterator currentJob;
+    WorkIterator endJob;
+
 
     State state;
 };

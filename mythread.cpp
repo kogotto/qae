@@ -1,4 +1,4 @@
-#include "mythread.h"
+﻿#include "mythread.h"
 
 #include <cassert>
 
@@ -89,7 +89,8 @@ Controller::~Controller()
 void Controller::start(const Work &work)
 {
     this->work = work;
-    currentJob = 0;
+    currentJob = begin(work);
+    endJob = end(work);
     state = State::working;
 
     doNextJob();
@@ -114,8 +115,9 @@ Controller::State Controller::getState() const
   return state;
 }
 
-void Controller::stageCompleteSlot(int stage)
+void Controller::stageCompleteSlot(int input, int stage)
 {
+    assert(input == currentInput());
     emit stageCompleteSignal(currentJob, stage);
 }
 
@@ -135,11 +137,11 @@ void Controller::workComplete(int input)
 void Controller::doNextJob()
 {
     if (state == State::working) {
-        jc.start(currentInput());
+        emit doStage(currentInput(), currentJob.stage);
     }
 }
 
-int Controller::currentInput()
+int Controller::currentInput() const
 {
-    return work[currentJob];
+    return work[currentJob.work];
 }

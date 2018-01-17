@@ -52,7 +52,8 @@ private:
 
 class WorkIterator {
 public:
-    explicit WorkIterator(int work, int stage = 1):
+    WorkIterator() = delete;
+    explicit WorkIterator(size_t work, size_t stage = 1):
         work(work),
         stage(stage)
     {}
@@ -76,9 +77,9 @@ public:
         return !(operator==(rhs));
     }
 
+    size_t work = 0;
+    size_t stage = 0;
 private:
-    int work;
-    int stage;
     static const int stages = 2;
 };
 

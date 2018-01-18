@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -20,8 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&controller, &Controller::stageCompleteSignal,
             this, &MainWindow::stageCompleteSlot);
-    connect(&controller, &Controller::workCompleteSignal,
-            this, &MainWindow::workCompleteSlot);
     connect(&controller, &Controller::finished,
             this, &MainWindow::finishedSlot);
 }

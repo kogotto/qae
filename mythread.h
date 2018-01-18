@@ -14,45 +14,20 @@ class Worker:
     Q_OBJECT
 
 public slots:
-    void doStage(int stage);
+    void doStage(int input, int stage);
 
 signals:
-    void stageComplete(int stage);
+    void stageComplete(int result, int stage);
 
 private:
-    void stage1();
-    void stage2();
-};
-
-class JobController:
-        public QObject
-{
-    Q_OBJECT
-public:
-    void start(int input);
-    void stop();
-
-signals:
-    void doStage(int stage);
-
-    void stageCompleteSignal(int stage);
-    void completeSignal(int input);
-
-public slots:
-    void stageCompleteSlot(int stage);
-
-private:
-    void doNextStage();
-
-    int input = 0;
-    int currentStage = 0;
-    bool paused = false;
+    void stage1(int input);
+    void stage2(int input);
 };
 
 
 class WorkIterator {
 public:
-    WorkIterator() = delete;
+    WorkIterator() = default;
     explicit WorkIterator(size_t work, size_t stage = 1):
         work(work),
         stage(stage)
@@ -77,17 +52,17 @@ public:
         return !(operator==(rhs));
     }
 
-    size_t work = 0;
-    size_t stage = 0;
+    int work = 0;
+    int stage = 0;
 private:
     static const int stages = 2;
 };
 
-WorkIterator begin(const Work &) {
+inline WorkIterator begin(const Work &) {
     return WorkIterator(0);
 }
 
-WorkIterator end(const Work & work) {
+inline WorkIterator end(const Work & work) {
     return WorkIterator(work.size());
 }
 
@@ -114,17 +89,15 @@ public:
 
     State getState() const;
 
-signals:
+signals: // for the world
     void stageCompleteSignal(int currentIndex, int currentStage);
-    void workCompleteSignal(int currentIndex);
     void finished();
 
-signals:
+signals: // for worker
     void doStage(int input, int stage);
 
 private slots:
-    void stageCompleteSlot(int input, int stage);
-    void workComplete(int input);
+    void stageCompleteSlot(int result, int stage);
 
 private:
     void doNextJob();

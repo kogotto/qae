@@ -3,58 +3,29 @@
 #include <cassert>
 
 
-void Worker::doStage(int stage) {
+void Worker::doStage(int input, int stage) {
     switch (stage) {
-        case 1: return stage1();
-        case 2: return stage2();
+        case 1: return stage1(input);
+        case 2: return stage2(input);
         default:
             assert(false && "unknown stage");
     }
 }
 
-void Worker::stage1()
+void Worker::stage1(int input)
 {
     const auto time = qrand() % 500 + 1000;
     QThread::msleep(time);
-    emit stageComplete(1);
+    const int result = input * 2;
+    emit stageComplete(result, 1);
 }
 
-void Worker::stage2()
+void Worker::stage2(int input)
 {
     const auto time = qrand() % 500 + 1000;
     QThread::msleep(time);
-    emit stageComplete(2);
-}
-
-
-void JobController::start(int input) {
-    this->input = input;
-    currentStage = 1;
-    paused = false;
-    doNextStage();
-}
-
-void JobController::stop()
-{
-  paused = true;
-}
-
-void JobController::stageCompleteSlot(int stage) {
-    assert(stage == currentStage);
-    emit stageCompleteSignal(stage);
-    ++currentStage;
-    if (currentStage > 2) {
-        emit completeSignal(input);
-        return;
-    }
-
-    doNextStage();
-}
-
-void JobController::doNextStage() {
-    if (!paused) {
-        emit doStage(currentStage);
-    }
+    const int result = input + 10;
+    emit stageComplete(result, 2);
 }
 
 
@@ -67,15 +38,10 @@ Controller:: Controller():
     connect(&workerThread, &QThread::finished,
             worker, &QObject::deleteLater);
 
-    connect(&jc, &JobController::doStage,
+    connect(this, &Controller::doStage,
             worker, &Worker::doStage);
     connect(worker, &Worker::stageComplete,
-            &jc, &JobController::stageCompleteSlot);
-
-    connect(&jc, &JobController::stageCompleteSignal,
             this, &Controller::stageCompleteSlot);
-    connect(&jc, &JobController::completeSignal,
-            this, &Controller::workComplete);
 
     workerThread.start();
 }
@@ -107,7 +73,6 @@ void Controller::cont()
 void Controller::stop()
 {
     state = State::interapted;
-    jc.stop();
 }
 
 Controller::State Controller::getState() const
@@ -115,18 +80,14 @@ Controller::State Controller::getState() const
   return state;
 }
 
-void Controller::stageCompleteSlot(int input, int stage)
+void Controller::stageCompleteSlot(int result, int stage)
 {
-    assert(input == currentInput());
-    emit stageCompleteSignal(currentJob, stage);
-}
+    assert(currentJob.stage == stage);
+    emit stageCompleteSignal(currentJob.work, stage);
 
-void Controller::workComplete(int input)
-{
-    emit workCompleteSignal(currentJob);
     ++currentJob;
-
-    if (currentJob == work.size()) {
+    if (currentJob == endJob) {
+        state = State::idle;
         emit finished();
         return;
     }
